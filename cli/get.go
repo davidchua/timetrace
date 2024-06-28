@@ -56,18 +56,32 @@ func getRecordCommand(t *core.Timetrace) *cobra.Command {
 		Short: "Display a record",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			start, err := t.Formatter().ParseRecordKey(args[0])
-			if err != nil {
-				out.Err("failed to parse date argument: %s", err.Error())
-				return
-			}
+			var (
+				record *core.Record
+				err    error
+			)
+			switch args[0] {
+			case "last":
+				record, err = t.LoadLatestRecord()
+				if err != nil {
+					out.Err("failed to load latest record: %s", err.Error())
+					return
+				}
+			default:
 
-			record, err := t.LoadRecord(start)
-			if err != nil {
-				out.Err("failed to read record: %s", err.Error())
-				return
-			}
+				start, err := t.Formatter().ParseRecordKey(args[0])
+				if err != nil {
+					out.Err("failed to parse date argument: %s", err.Error())
+					return
+				}
 
+				record, err = t.LoadRecord(start)
+				if err != nil {
+					out.Err("failed to read record: %s", err.Error())
+					return
+				}
+
+			}
 			showRecord(record, t.Formatter())
 		},
 	}
