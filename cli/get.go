@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/dominikbraun/timetrace/core"
 	"github.com/dominikbraun/timetrace/out"
@@ -109,12 +110,14 @@ func showRecord(record *core.Record, formatter *core.Formatter) {
 
 	rows := [][]string{
 		{
+			formatter.PrettyDateString(record.Start),
 			formatter.TimeString(record.Start),
 			end,
 			project,
 			isBillable,
+			strings.Join(record.Notes, "\n"),
 		},
 	}
 
-	out.Table([]string{"Start", "End", "Project", "Billable"}, rows, nil)
+	out.Table([]string{"Date", "Start", "End", "Project", "Billable", "Notes"}, rows, nil)
 }
